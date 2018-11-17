@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">GPSLocator</string>
+    <string name="activity_unknown">Unknown</string>
+    <string name="activity_in_vehicle">In Vehicle</string>
+    <string name="activity_on_foot">On foot</string>
+    <string name="activity_still">Still</string>
+    <string name="activity_running">Running</string>
+    <string name="activity_walking">Walking</string>
+    <string name="activity_tilting">Tilting</string>
+    <string name="negative">I\'m not</string>
+    <string name="positive">I\'m parking</string>
+    <string name="dialog_occupation_confirmation">Are you parking your car?</string>
+    <string name="dialog_liberation_confirmation">Are you leaving a spot free?</string>
+    <string name="ENTER_CAR_MODE">Start to use the car!</string>
+    <string name="ENTER_FOOT_MODE">Start foot mode!</string>
+    <string name="OUT_CAR_MODE">Out of car!</string>
+    <string name="OUT_FOOT_MODE">Stops foot mode!</string>
+    <string name="USER_ID_RESERVED">You must change it, reserve number to not_user</string>
+
+</resources>

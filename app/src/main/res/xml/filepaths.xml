@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <files-path path="." name="files" />
+    <files-path path="/" name="files" />
+    <files-path path="files/" name="my_tracks" />
+    <files-path path="/files" name="my_tracks" />
+</paths>
