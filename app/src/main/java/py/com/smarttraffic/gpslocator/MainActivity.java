@@ -76,7 +76,8 @@ public class MainActivity extends AppCompatActivity
     private TextView parkingSpot;
     private Button startGps;
     private Button stopGps;
-    private User me = new User("User", "Profile",13);
+    //TODO:Change to a DB for persistence...(for now is just a test user)
+    private User me = new User("User", "Test",13);
     private int indexOfParkingSpot;
     private int typeOfActivity;
     private TextView userParkStatus;
@@ -146,7 +147,6 @@ public class MainActivity extends AppCompatActivity
                         "\nProvider :" + location.getProvider());
                 savePointInGpxFile(location);
                 indexOfParkingSpot = isPointInsideParkingSpot(finalParkingSpots, location);
-                //ALERT: :::TROUBLE HERE, WHEN EXPLODES, ENTER HERE...
                 if(indexOfParkingSpot != Constants.NOT_IN_PARKINGSPOT){
                     // if return something diferent that the -1, is because have found a parking spot...
                     // It found a the location of user inside a polygon ...
@@ -163,21 +163,20 @@ public class MainActivity extends AppCompatActivity
                     }else{
                         //unify by IN_VEHICLE...
                         if(finalParkingSpots.get(indexOfParkingSpot).setFree(me.userID)){
-                            userParkStatus.setText("Estas liberando el lugar" + finalParkingSpots.get(indexOfParkingSpot).getPolygon().name);
+                            if(!dialogDisoccupationShow){
+                                showDisoccupationDialogMessage(
+                                        getResources().getString(R.string.dialog_liberation_confirmation));
+                                dialogDisoccupationShow = true;
+                            }
                         }else{
-                            userParkStatus.setText("No puedes liberar el lugar" + finalParkingSpots.get(indexOfParkingSpot).getPolygon().name + "si no has estacionado aqui !");
-                        }
-                        if(!dialogOccupationShow){
-                            showDisoccupationDialogMessage(
-                                    getResources().getString(R.string.dialog_liberation_confirmation));
-                            dialogOccupationShow = true;
+                            Toast.makeText(MainContext, "No puedes liberar el lugar", Toast.LENGTH_LONG).show();
                         }
                     }
                 }
 
+                //TODO:Change to GEOFENCING....
 //                locationListenerHighFrequency();
                 //FOR CHANGE NEAR THE DESTINY OF THE USER...(UCA example, add home for testing)
-//                //TODO:Change to GEOFENCING....
 //                if (location.distanceTo(ucaCampus) < 300 || location.distanceTo(home < 150)) {
 //                    //notification manager  ...
 //                    if(notificationSent == false){
@@ -604,8 +603,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     //Dialog of OCCUPATION of the spot...
-
-
     public void showOccupationDialogMessage(String message) {
         // Create an instance of the dialog fragment and show it
         // its possible that would be need to create more than just one type of
@@ -639,7 +636,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     //Dialog of DISOCCUPATION of the spot...
-
     public void showDisoccupationDialogMessage(String message) {
         // Create an instance of the dialog fragment and show it
         // its possible that would be need to create more than just one type of
