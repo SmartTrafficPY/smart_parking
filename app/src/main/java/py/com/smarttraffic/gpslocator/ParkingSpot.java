@@ -8,15 +8,14 @@ public class ParkingSpot {
     public final Polygon polygon;
     public String stateOfSpot;
     public String lastStateOfSpot;
-
     public Date timeOfStateChange;
     public int userID;
 
-    public ParkingSpot(String stateOfSpot,String lastStateOfSpot, Polygon polygon, Date momentOfChange,int userID) {
+    public ParkingSpot(String stateOfSpot,String lastStateOfSpot, Polygon polygon, Date timeOfStateChange,int userID) {
         this.stateOfSpot = stateOfSpot;
         this.lastStateOfSpot = lastStateOfSpot;
         this.polygon = polygon;
-        this.timeOfStateChange = momentOfChange;
+        this.timeOfStateChange = timeOfStateChange;
         this.userID = userID;
     }
 

@@ -63,7 +63,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity
-        implements OccupationDialogFragment.NoticeDialogListener {
+        implements OccupationDialogFragment.NoticeDialogListener,DisoccupiedDialogFragment.NoticeDialogListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -80,7 +80,8 @@ public class MainActivity extends AppCompatActivity
     private int indexOfParkingSpot;
     private int typeOfActivity;
     private TextView userParkStatus;
-    public boolean dialogShow = false;
+    private boolean dialogOccupationShow = false;
+    private boolean dialogDisoccupationShow = false;
     private ArrayList<ParkingSpot> finalParkingSpots = new ArrayList<ParkingSpot>();
 
     private Location ucaCampus = new Location("dummyprovider");
@@ -132,7 +133,6 @@ public class MainActivity extends AppCompatActivity
         finalParkingSpots = parkingSpots;
 
         locationListener = new LocationListener() {
-
             //TODO: this can be module by declaring a Global Location variable, that is changed...
             //TODO... with the Location at the user, then we can corroborated if has parked or not.
             @SuppressLint("MissingPermission")
@@ -155,17 +155,22 @@ public class MainActivity extends AppCompatActivity
                         if(finalParkingSpots.get(indexOfParkingSpot).setOccupied(me.userID)){
                             userParkStatus.setText("Estas ocupando el lugar" + finalParkingSpots.get(indexOfParkingSpot).getPolygon().name);
                         }
-                        if(dialogShow == false){
+                        if(!dialogOccupationShow){
                             showOccupationDialogMessage(
                                     getResources().getString(R.string.dialog_occupation_confirmation));
-                            dialogShow = true;
+                            dialogOccupationShow = true;
                         }
-                    }else{//TODO: Make a Dialog to free a spot in the parking...
+                    }else{
                         //unify by IN_VEHICLE...
                         if(finalParkingSpots.get(indexOfParkingSpot).setFree(me.userID)){
                             userParkStatus.setText("Estas liberando el lugar" + finalParkingSpots.get(indexOfParkingSpot).getPolygon().name);
                         }else{
                             userParkStatus.setText("No puedes liberar el lugar" + finalParkingSpots.get(indexOfParkingSpot).getPolygon().name + "si no has estacionado aqui !");
+                        }
+                        if(!dialogOccupationShow){
+                            showDisoccupationDialogMessage(
+                                    getResources().getString(R.string.dialog_liberation_confirmation));
+                            dialogOccupationShow = true;
                         }
                     }
                 }
@@ -474,15 +479,15 @@ public class MainActivity extends AppCompatActivity
         //Open the file and then pass it to the xml analyzer to get the data information ...
         String fileName = "Parking Spots.kml";
         String Directory = "PolyMap";
-        File kmlDir = new File(this.getFilesDir(),Directory);
+        File kmlDir = new File(this.getFilesDir(), Directory);
         ArrayList<Polygon> Polygons = new ArrayList<Polygon>();
         ArrayList<ParkingSpot> Spots = new ArrayList<ParkingSpot>();
         ArrayList Places = new ArrayList();
         ArrayList coordinates = new ArrayList();
 
         // Parser for kml files JSOUP...
-        String inputFileContents = readFile(kmlDir + "/" + fileName); // find a way to read the file and store it in a string
-        String xmlContent = inputFileContents;
+        String xmlContent = readFile(kmlDir + "/" + fileName);
+        // find a way to read the file and store it in a string
         Document doc = Jsoup.parse(xmlContent, "", Parser.xmlParser());
         for(Element p : doc.select("Placemark").select("name")){
             // the contents
@@ -598,6 +603,9 @@ public class MainActivity extends AppCompatActivity
         Toast.makeText(this,"Change to Low GPS data frequency recolection modo", Toast.LENGTH_LONG).show();
     }
 
+    //Dialog of OCCUPATION of the spot...
+
+
     public void showOccupationDialogMessage(String message) {
         // Create an instance of the dialog fragment and show it
         // its possible that would be need to create more than just one type of
@@ -609,25 +617,56 @@ public class MainActivity extends AppCompatActivity
             public void run() {
                 dialog.dismiss();
                 timer.cancel();
-                dialogShow = false;
+                dialogOccupationShow = false;
                 // If user do not respond, take as a parking action...
             }
         }, 10000);
     }
 
-    //TODO: know the button user press to make functions...
     @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
+    public void onDialogOccupiedPositiveClick(DialogFragment dialog) {
         //Saved the parking spot to the user that has occupied(already done before)...
         dialog.dismiss();
-        dialogShow = false;
+        dialogOccupationShow = false;
         //just wipe out the dialog
     }
 
     @Override
-    public void onDialogNegativeClick(DialogFragment dialog) {
+    public void onDialogOccupiedNegativeClick(DialogFragment dialog) {
         finalParkingSpots.get(indexOfParkingSpot).setUnknown();
-        dialogShow = false;
+        dialogOccupationShow = false;
+        dialog.dismiss();
+    }
+
+    //Dialog of DISOCCUPATION of the spot...
+
+    public void showDisoccupationDialogMessage(String message) {
+        // Create an instance of the dialog fragment and show it
+        // its possible that would be need to create more than just one type of
+        ///...dialog fragment, cause the answer would be different...
+        final DialogFragment dialog = new DisoccupiedDialogFragment(message);
+        dialog.show(getSupportFragmentManager(), "NoticeDialogFragment");
+        final Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            public void run() {
+                dialog.dismiss();
+                timer.cancel();
+                dialogDisoccupationShow = false;
+                // If user do not respond, take as a parking action...
+            }
+        }, 10000);
+    }
+
+    @Override
+    public void onDialogDisoccupiedPositiveClick(DialogFragment dialog) {
+        dialogDisoccupationShow = false;
+        dialog.dismiss();
+    }
+
+    @Override
+    public void onDialogDisoccupiedNegativeClick(DialogFragment dialog) {
+        finalParkingSpots.get(indexOfParkingSpot).setOccupied(me.getUserID());
+        dialogDisoccupationShow = false;
         dialog.dismiss();
     }
 

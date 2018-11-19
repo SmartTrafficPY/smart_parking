@@ -10,8 +10,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <service android:name=".GeofenceTransitionsIntentService"/>
-
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="py.com.smarttraffic.gpslocator"

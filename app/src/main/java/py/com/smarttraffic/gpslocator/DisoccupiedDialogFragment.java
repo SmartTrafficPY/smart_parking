@@ -9,11 +9,12 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
 @SuppressLint("ValidFragment")
-public class OccupationDialogFragment extends DialogFragment {
+public class DisoccupiedDialogFragment extends DialogFragment {
+
     private final String message;
 
     @SuppressLint("ValidFragment")
-    public OccupationDialogFragment(String message) {
+    public DisoccupiedDialogFragment(String message) {
         this.message = message;
     }
 
@@ -21,12 +22,12 @@ public class OccupationDialogFragment extends DialogFragment {
      * implement this interface in order to receive event callbacks.
      * Each method passes the DialogFragment in case the host needs to query it. */
     public interface NoticeDialogListener {
-        void onDialogOccupiedPositiveClick(DialogFragment dialog);
-        void onDialogOccupiedNegativeClick(DialogFragment dialog);
+        void onDialogDisoccupiedPositiveClick(DialogFragment dialog);
+        void onDialogDisoccupiedNegativeClick(DialogFragment dialog);
     }
 
     // Use this instance of the interface to deliver action events
-    NoticeDialogListener mListener;
+    DisoccupiedDialogFragment.NoticeDialogListener mListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -37,13 +38,13 @@ public class OccupationDialogFragment extends DialogFragment {
                 .setPositiveButton(R.string.positive, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // Send the positive button event back to the host activity
-                        mListener.onDialogOccupiedPositiveClick(OccupationDialogFragment.this);
+                        mListener.onDialogDisoccupiedPositiveClick(DisoccupiedDialogFragment.this);
                     }
                 })
                 .setNegativeButton(R.string.negative, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // Send the negative button event back to the host activity
-                        mListener.onDialogOccupiedNegativeClick(OccupationDialogFragment.this);
+                        mListener.onDialogDisoccupiedNegativeClick(DisoccupiedDialogFragment.this);
                     }
                 });
         return builder.create();
@@ -55,7 +56,7 @@ public class OccupationDialogFragment extends DialogFragment {
         // Verify that the host activity implements the callback interface
         try {
             // Instantiate the NoticeDialogListener so we can send events to the host
-            mListener = (NoticeDialogListener) activity;
+            mListener = (DisoccupiedDialogFragment.NoticeDialogListener) activity;
         } catch (ClassCastException e) {
             // The activity doesn't implement the interface, throw exception
             throw new ClassCastException(activity.toString()
